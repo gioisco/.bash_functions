@@ -48,6 +48,7 @@ flatpak-list --sort=size
 
 ### Contributions
 
+- (good first issue) Improve this README file
 - (good first issue) Add --app as optional parameter
 - multi-columns sorting
 - issues with review of code, are welcome
