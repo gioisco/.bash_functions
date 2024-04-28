@@ -15,6 +15,7 @@ _import_recursively() {
     local ignore_files=(
         "README.md"
         "LICENSE"
+        "Scripts"
     )
 
     if [ -d "$path" ]; then
@@ -40,6 +41,7 @@ _import_recursively() {
 
 if [ -d ~/.bash_functions ]; then
     _import_recursively "$functions_directory"
+    PATH=$PATH:$functions_directory/Scripts
 fi
 ```
 
