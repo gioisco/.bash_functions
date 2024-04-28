@@ -8,7 +8,6 @@ function find_column_index() {
   done
 }
 
-
 function flatpak-list() {
   local columns="name,application,version,size,description"
   local sort_column_name_default="name"
@@ -18,31 +17,31 @@ function flatpak-list() {
   # Parse command line arguments
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --columns=*)
-        if [ "${1#*=}" != "all" ]; then
-          columns="${1#*=}"
-        fi
-        ;;
-      --sort=*)
-        sort_column_name="${1#*=}"
-        ;;
-      --help)
-        echo "Usage: flatpak-list [OPTIONS]"
-        echo "Get a list of flatpak packages."
-        echo "Options:"
-        echo "  --columns=COLS  Specify columns to display (comma-separated list)"
-        echo "                  e.g., --columns=name,application,version,size"
-        echo "                  If 'help' is specified, show available columns."
-        echo "  --sort=COL      Specify the column to sort the list"
-        echo "                  e.g., --sort=size"
-        echo "                  If 'help' is specified, show available columns."
-        echo "  --help          Display this help message"
-        return 0
-        ;;
-      *)
-        echo "Invalid option: $1"
-        return 1
-        ;;
+    --columns=*)
+      if [ "${1#*=}" != "all" ]; then
+        columns="${1#*=}"
+      fi
+      ;;
+    --sort=*)
+      sort_column_name="${1#*=}"
+      ;;
+    --help)
+      echo "Usage: flatpak-list [OPTIONS]"
+      echo "Get a list of flatpak packages."
+      echo "Options:"
+      echo "  --columns=COLS  Specify columns to display (comma-separated list)"
+      echo "                  e.g., --columns=name,application,version,size"
+      echo "                  If 'help' is specified, show available columns."
+      echo "  --sort=COL      Specify the column to sort the list"
+      echo "                  e.g., --sort=size"
+      echo "                  If 'help' is specified, show available columns."
+      echo "  --help          Display this help message"
+      return 0
+      ;;
+    *)
+      echo "Invalid option: $1"
+      return 1
+      ;;
     esac
     shift
   done
@@ -54,7 +53,7 @@ function flatpak-list() {
   fi
 
   # Split the columns string using a comma as a delimiter
-  IFS=',' read -ra column_array <<< "$columns"
+  IFS=',' read -ra column_array <<<"$columns"
 
   # Find the index of the sorting column
   if [[ -n "$sort_column_name" ]]; then
@@ -103,13 +102,12 @@ function flatpak-list() {
   (echo -e "$headers" && flatpak list --app --columns=$columns | tail -n +1 | sed 's/\xc2\xa0//g' | eval $sort_command) | column -t -s $'\t'
 }
 
-
 # _flatpak_list - Bash completion for flatpak-list function
 _flatpak_list() {
   local cur prev opts
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  prev="${COMP_WORDS[COMP_CWORD - 1]}"
   opts="--columns= --sort= --help"
 
   # Uncomment the lines below for debugging purposes
@@ -126,14 +124,14 @@ _flatpak_list() {
 
   # Check if the last word in the command line matches specific patterns for completion
   case "${prev}" in
-    --columns*|--sort*|=*)
-      # Replace "flatpak-list" with "flatpak list" and "sort" with "columns" in COMP_LINE
-      COMP_LINE=$(echo "${COMP_LINE}" | sed 's/flatpak-list/flatpak list/;s/sort/columns/')
-      # Use flatpak complete to get completion options and append them to COMPREPLY
-      RES=($(flatpak complete "${COMP_LINE}" "${COMP_POINT}" "${cur}"))
-      COMPREPLY+=("${RES[@]}")
-      return 0
-      ;;
+  --columns* | --sort* | =*)
+    # Replace "flatpak-list" with "flatpak list" and "sort" with "columns" in COMP_LINE
+    COMP_LINE=$(echo "${COMP_LINE}" | sed 's/flatpak-list/flatpak list/;s/sort/columns/')
+    # Use flatpak complete to get completion options and append them to COMPREPLY
+    RES=($(flatpak complete "${COMP_LINE}" "${COMP_POINT}" "${cur}"))
+    COMPREPLY+=("${RES[@]}")
+    return 0
+    ;;
   esac
 
   # If the command is still incomplete, do nothing (no autocompletion)
